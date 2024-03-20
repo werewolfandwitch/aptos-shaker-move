@@ -15,5 +15,5 @@ Empowerment through Invitation Rights: As invitees continue to participate in th
 Aptos Shaker is licensed under the MIT License.
 
 # Contact Us
-For inquiries or feedback, please reach out to us twitter: @AWW_xyz.
+For inquiries or feedback, please reach out to us https://www.aptosshaker.xyz.
  
