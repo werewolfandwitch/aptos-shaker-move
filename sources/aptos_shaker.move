@@ -304,8 +304,7 @@ module dice_app::aptos_shaker {
         let resource_signer = get_resource_account_cap(game_address);
         let resource_account_address = signer::address_of(&resource_signer);
 
-        let dice_game = borrow_global_mut<AptosShakerGame>(game_address);                
-        // get multiple
+        let dice_game = borrow_global_mut<AptosShakerGame>(game_address);                        
         let maps = borrow_global<MultipleInfo>(game_address);
         assert!(simple_map::contains_key(&maps.multiple_map, &guess_params_sum), EKEY_NOT_EXISTS);
         
@@ -314,17 +313,18 @@ module dice_app::aptos_shaker {
         // dynamic multiplier                
         let last_game_time = dice_game.last_game_time;       
         let elapsed_time = now_second - last_game_time; // time after win 
-        let delta = multiple / 3;                
+        let delta = multiple / 3;    
+
         // The delta value increases every hour, and after 3 hours, the multiple will double.
         let dynamic_multiplier = if(elapsed_time > 3600) { delta * (elapsed_time / 3600) } else { 0 };        
-
+        let applied_multiple = multiple + dynamic_multiplier;                        
         // When a high multiplier is obtained, fewer points are awarded.
-        let points = 10 - dynamic_multiplier;
-        if (points < 2) {            
-            update_play_count_and_check_invite(dice_game, sender_addr, 1);
-        } else {
-            update_play_count_and_check_invite(dice_game, sender_addr, points);
-        };        
+        // let points = 30 - dynamic_multiplier;
+        // if (points < 2) {            
+        //     update_play_count_and_check_invite(dice_game, sender_addr, 1);
+        // } else {
+        update_play_count_and_check_invite(dice_game, sender_addr, multiple);
+        // };        
          
         let _fee_rate = dice_game.fee_rate;
         let _fee_payee = dice_game.fee_payee;
@@ -348,21 +348,23 @@ module dice_app::aptos_shaker {
 
         let (final_number_1, final_number_2) = randomly_pick_number();        
         
-        let win_price = calculate_win_price(bet_price, multiple + dynamic_multiplier, _total_fee); // applied dynamic multiplier        
+        let win_price = calculate_win_price(bet_price, applied_multiple, _total_fee); // applied dynamic multiplier        
+        let loser_fee = bet_price - _total_fee;
         let sum = final_number_1 + final_number_2;            
         if(guess_params_sum == sum) {                                                
             let vault_coin = coin::withdraw<CoinType>(&resource_signer, win_price);                            
             coin::deposit(sender_addr, vault_coin);                
         } else {
-            let coins = coin::withdraw<CoinType>(sender, bet_price - _total_fee);
+            let coins = coin::withdraw<CoinType>(sender, loser_fee);
             coin::deposit(resource_account_address, coins);                
         };                     
-        dice_game.last_game_time = now_second;                        
+        dice_game.last_game_time = now_second;
+        
         event::emit_event(&mut dice_game.roll_events, RollEvent { 
             dice_one: final_number_1,
             dice_two: final_number_2,
-            multiple: multiple + dynamic_multiplier,
-            game_time:last_game_time,
+            multiple: applied_multiple,
+            game_time: now_second,
             game_type: 2           
         });
     }
