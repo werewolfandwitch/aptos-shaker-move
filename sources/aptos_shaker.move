@@ -197,6 +197,7 @@ module dice_app::aptos_shaker {
         if(jackpot) {
             let jackpot_win_coins = coin::withdraw<CoinType>(&resource_signer, dice_game.jackpot_amount);            
             coin::deposit(sender_addr, jackpot_win_coins);
+            dice_game.jackpot_amount = 0;
         };
 
         let _total_fee = bet_price * _fee_rate / FEE_DENOMINATOR;
@@ -207,8 +208,7 @@ module dice_app::aptos_shaker {
         coin::deposit(_fee_payee, game_fee_coin);
 
         let inviter_fee = _total_fee * INVITER_FEE_RATE / FEE_DENOMINATOR;        
-        let invitee_fee = inviter_fee;
-        
+        let invitee_fee = inviter_fee;        
         
         let inviter_address = get_inviter_address(dice_game, sender_addr);
         if(option::is_some(&mut inviter_address)) {
@@ -278,6 +278,7 @@ module dice_app::aptos_shaker {
         if(jackpot) {
             let jackpot_win_coins = coin::withdraw<CoinType>(&resource_signer, dice_game.jackpot_amount);            
             coin::deposit(sender_addr, jackpot_win_coins);
+            dice_game.jackpot_amount = 0;
         };
 
         let _fee_rate = dice_game.fee_rate;
