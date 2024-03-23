@@ -11,6 +11,10 @@ Reduced Fees for Invitees: Individuals who are invited to join the game, known a
 
 Empowerment through Invitation Rights: As invitees continue to participate in the game and contribute to its growth, they earn the privilege to invite others, thereby expanding the player community and perpetuating the cycle of user recruitment.
 
+Dynamic Multiplier: To encourage continued engagement from players, we have implemented a system where the multiplier gradually increases if the game is not played for a certain period of time. In no other game is it possible to provide such a feature transparently.
+
+Jackpot: For extra user engagement, we have implemented a jackpot feature in the game that triggers randomly after a certain number of plays. This feature is designed to incentivize users to play the game regularly and adds an element of excitement to the gameplay experience.
+
 # License
 Aptos Shaker is licensed under the MIT License.
 
